@@ -1,3 +1,5 @@
+const client = require('../../db');
+
 const router = require('express').Router();
 
 router.get('/:id/itens', async (req, res) => {
@@ -10,7 +12,18 @@ router.get('/:id/itens', async (req, res) => {
 
 })
     router.post('/', (req, res) => {
-    res.send('Criar carrinho')
+    const {user_id} = req.body
+    try{
+        await client.query(
+            'INSERT INTO cart (user_id) VALUES ($1)',
+            [user_id]
+        )
+        res.status(201).json({message: 'Carrinho criado com sucesso'})
+    } catch (error) {
+        console.log("Erro ao criar caarrinho", error)
+        res.status(500).json({"Erro ao cirar carrinho", error.message})
+
+    }
 })
 
 router.post('/item', (req, res) => {
